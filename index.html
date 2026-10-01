@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EuroLeague DvP</title>
+<style>
+  :root { --bg: #f7f7f8; --fg: #1a1a1e; --muted: #6b6b75; --card: #fff; --line: #e2e2e7; --accent: #e8590c; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #121214; --fg: #ececf0; --muted: #9a9aa5; --card: #1c1c20; --line: #2e2e34; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 16px; background: var(--bg); color: var(--fg); font: 15px/1.45 system-ui, sans-serif; }
+  main { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  h1 { margin: 0; font-size: 1.4rem; }
+  h2 { margin: 0 0 8px; font-size: 1rem; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  label { display: flex; gap: 6px; align-items: center; }
+  select, textarea, input, button { font: inherit; color: inherit; }
+  select, textarea, button { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; }
+  button { cursor: pointer; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  textarea { width: 100%; min-height: 9em; font-family: ui-monospace, monospace; margin: 8px 0; }
+  .muted, small { color: var(--muted); }
+  .error { color: #d33; min-height: 1.2em; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+  th:first-child { text-align: left; }
+  thead button { all: unset; cursor: pointer; font-weight: 600; }
+  thead button:focus-visible { outline: 2px solid var(--accent); }
+  details summary { cursor: pointer; font-weight: 600; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<main>
+  <h1>EuroLeague Defense vs Position</h1>
+  <p id="notice" class="muted" role="status"></p>
+
+  <section>
+    <div class="row">
+      <label>Stat <select id="stat"></select></label>
+      <label>Rounds
+        <select id="lastN"><option value="0">All games</option><option value="10">Last 10</option><option value="5">Last 5</option><option value="3">Last 3</option></select>
+      </label>
+      <span id="rounds" class="muted"></span>
+    </div>
+    <p id="avg" class="muted"></p>
+    <p class="muted">Average allowed per game to each position. Green = softer than league average (good matchup), #1 = gives up the most.</p>
+    <div class="table-wrap">
+      <table><thead id="thead"></thead><tbody id="tbody"></tbody></table>
+    </div>
+  </section>
+
+  <section>
+    <details>
+      <summary>Import a round</summary>
+      <p><label>Excel export <input id="file" type="file" accept=".xlsx,.xls"></label></p>
+      <p id="importInfo" class="muted"></p>
+      <label for="fixtures">Fixtures, one per line (HOME-AWAY)</label>
+      <textarea id="fixtures" placeholder="PAR-DUB&#10;OLY-HTA&#10;..."></textarea>
+      <p id="importError" class="error" role="alert"></p>
+      <div class="row">
+        <button id="importBtn" class="primary" type="button">Import round</button>
+        <button id="download" type="button">Download data.json</button>
+      </div>
+    </details>
+  </section>
+</main>
+</body>
+</html>
